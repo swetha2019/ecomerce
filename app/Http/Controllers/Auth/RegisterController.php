@@ -1,19 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
-
+use DB;
+use Mail;
 use App\User;
 use Validator;
 use Illuminate\Http\Request;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
-//use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use DB;
-use Mail;
 
 class RegisterController extends Controller
 {
@@ -52,17 +47,16 @@ class RegisterController extends Controller
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
-    */
- /* protected function validator(array $data)
-    {  
-        return  Validator::make($data, [
+     */
+   /* protected function validator(array $data)
+    {
+        return Validator::make($data, [
             'name' => 'required|max:255',
-            'phone'=> 'required|max:11|min:10',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
-            'terms'=> 'required'
         ]);
-    }*/
+    }
+
     /**
      * Create a new user instance after a valid registration.
      *
@@ -81,23 +75,22 @@ class RegisterController extends Controller
         ]);
     }
 
+
     public function register(Request $request)
 {
     // Laravel validation
-          //  $validator = $this->validator($request->all());
-            $validator = Validator::make($request->all(),
-            array(
-           'name' => 'required|max:255',
-            'phone'=> 'required|max:11|min:10|unique:vendor_registartion',
-            'email' => 'required|email|max:255|unique:vendor_registartion',
-            'password' => 'required|min:6|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-            'terms'=> 'required'
-        ));
+    $validator = Validator::make($request->all(),[
+           'name' => 'required',
+            'phone'=> 'required|max:11|min:10|unique:vendor_registration',
+            'email' => 'required|email|unique:vendor_registration',
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/',
+            'password_confirmation'=>'same:password',
+            'terms'=> 'required']); 
 
   if($validator->fails()){
-        return  view('auth.register')->withErrors($validator)->withInput($request->all());
+        return  back()->withErrors($validator)->withInput($request->all());
     }
-     else {
+    else {
 
 
            /* if ($validator->fails()) 

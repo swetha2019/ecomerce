@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+Use DB;
 
 class LoginController extends Controller
 {
@@ -26,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+   // protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -42,11 +44,13 @@ public function credentials(Request $request)
 {
   $remember_me = $request->has('remember') ? true : false;
 
-  
 
     if(is_numeric($request->get('email')) || auth()->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $remember_me))
             {
+                  
               return ['phone'=>$request->get('email'),'password'=>$request->get('password'),'verified' => 1];
+
+    
             }
             return $request->only($this->username(), 'password','verified');
 
